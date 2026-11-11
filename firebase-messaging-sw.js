@@ -12,18 +12,9 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || "Tryo Plugin Manager";
-  const options = {
-    body: payload.notification?.body || "Ada notifikasi baru.",
-    icon: "./icon.svg",
-    badge: "./icon.svg",
-    tag: "tryo-plugin-notification",
-    data: { url: payload.data?.url || "./" }
-  };
-  return self.registration.showNotification(title, options);
-});
-
+// Notification payloads are displayed automatically by the Firebase Messaging SDK
+// while the page is in the background. Do not call showNotification again here,
+// otherwise the same push can be displayed twice.
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const target = new URL(event.notification.data?.url || "./", self.location.origin).href;
