@@ -36,6 +36,8 @@ function setActiveUi(message = "Perangkat ini sudah terdaftar untuk menerima not
   $("hint").textContent = message;
   $("permissionState").textContent = Notification.permission;
   $("workerState").textContent = "Aktif";
+  const testButton = $("testNotificationButton");
+  if (testButton) testButton.disabled = false;
 }
 async function registerToken(token) {
   await fetch(APPS_SCRIPT_URL, {
@@ -121,3 +123,26 @@ button.addEventListener("click", async () => {
     button.textContent = "Coba Lagi";
   }
 });
+
+
+const testNotificationButton = $("testNotificationButton");
+if (testNotificationButton) {
+  testNotificationButton.addEventListener("click", async () => {
+    testNotificationButton.disabled = true;
+    try {
+      const registration = await prepareMessaging();
+      await registration.showNotification("Tes Notifikasi Perangkat", {
+        body: "Jika pesan ini muncul, Android dan izin notifikasi lokal berfungsi.",
+        icon: "./icon.svg",
+        badge: "./icon.svg",
+        tag: "tryo-local-notification-test"
+      });
+      toast("Perintah tes notifikasi lokal berhasil dijalankan.");
+    } catch (error) {
+      console.error("Tes notifikasi lokal gagal:", error);
+      toast("Tes gagal: " + (error.message || error));
+    } finally {
+      testNotificationButton.disabled = false;
+    }
+  });
+}
