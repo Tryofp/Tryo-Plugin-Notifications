@@ -18,9 +18,10 @@ messaging.onBackgroundMessage((payload) => {
     body: payload.notification?.body || "Ada notifikasi baru.",
     icon: "./icon.svg",
     badge: "./icon.svg",
+    tag: "tryo-plugin-notification",
     data: { url: payload.data?.url || "./" }
   };
-  self.registration.showNotification(title, options);
+  return self.registration.showNotification(title, options);
 });
 
 self.addEventListener("notificationclick", (event) => {
