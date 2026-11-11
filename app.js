@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebas
 import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-messaging.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCBVAhsqzR9dFoAjq5JKTpDor7oDg4ZL8",
+  apiKey: "AIzaSyCBVAhsqyzR9dFoAjq5JKTpDor7oDg4ZL8",
   authDomain: "tryo-plugin-notifications.firebaseapp.com",
   projectId: "tryo-plugin-notifications",
   storageBucket: "tryo-plugin-notifications.firebasestorage.app",
