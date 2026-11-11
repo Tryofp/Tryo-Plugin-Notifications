@@ -12,7 +12,7 @@ const firebaseConfig = {
 
 // Public VAPID key from Firebase Cloud Messaging settings.
 const VAPID_KEY = "BEhgC96f5OJYpRYXkYsiMJElBJacXzVFyTd0zALZK7MzVsWjkHhNvr58iFaWCyw7TM0cdn9-D_ka4Ok_vCXSGn4";
-const WORKER_URL = "https://tryo-fcm-bridge.yogafajar723.workers.dev";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJzU3MiL_o9PjkF4h-prSw-P8vLVfJqGFXM7pFJOPzIzJXaGmu6z6oK0oJl54a6bQy0Q/exec";
 
 const $ = (id) => document.getElementById(id);
 const button = $("enableButton");
@@ -74,21 +74,23 @@ button.addEventListener("click", async () => {
 
     if (!token) throw new Error("FCM Token belum berhasil dibuat.");
 
-    const result = await fetch(WORKER_URL + "/register", {
+    // Apps Script web apps do not expose a reliable CORS response to browser fetch.
+    // A text/plain no-cors request avoids preflight; the server stores the token in Sheets.
+    await fetch(APPS_SCRIPT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token })
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        Type: "FcmRegister",
+        Token: token,
+        UserAgent: navigator.userAgent
+      })
     });
 
-    const data = await result.json();
-    if (!result.ok || !data.success) {
-      throw new Error(data.error || "Gagal mendaftarkan perangkat.");
-    }
-
-    setStatus("Notifikasi aktif di perangkat ini", true);
-    toast("Perangkat berhasil didaftarkan. Tes notifikasi akan dilakukan setelah integrasi server selesai.");
+    setStatus("Permintaan pendaftaran terkirim", true);
+    toast("Token perangkat sudah dikirim ke server. Aktifkan ulang jika notifikasi belum masuk.");
     button.textContent = "Notifikasi Aktif";
-    $("hint").textContent = "Perangkat ini sudah terhubung ke Tryo FCM Bridge.";
+    $("hint").textContent = "Perangkat ini terhubung langsung ke Firebase melalui Apps Script.";
 
     onMessage(messaging, (payload) => {
       const title = payload.notification?.title || "Tryo Plugin Manager";
